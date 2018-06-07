@@ -1,10 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace WebServer.Server.Contracts
+﻿namespace WebServer.Server.Contracts
 {
-    class IView
+    public interface IView
     {
+        string View();
     }
 }

@@ -1,10 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
+﻿using WebServer.Server.Contracts;
+using WebServer.Server.Enums;
 
 namespace WebServer.Server.Http.Contracts
 {
-    interface IHttpResponse
+    public interface IHttpResponse
     {
+        HttpHeaderCollection Headers { get; }
+        HttpStatusCode StatusCode { get; }
     }
 }

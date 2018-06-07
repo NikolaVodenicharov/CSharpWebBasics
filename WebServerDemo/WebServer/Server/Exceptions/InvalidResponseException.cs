@@ -1,10 +1,13 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace WebServer.Server.Exceptions
+﻿namespace WebServer.Server.Exceptions
 {
-    class InvalidResponseException
+    using System;
+
+    public class InvalidResponseException : Exception
     {
+        public InvalidResponseException(string message)
+            : base(message)
+        {
+
+        }
     }
 }

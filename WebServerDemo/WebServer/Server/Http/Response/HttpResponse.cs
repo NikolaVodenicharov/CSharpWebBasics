@@ -5,40 +5,29 @@
     using WebServer.Server.Common;
     using WebServer.Server.Contracts;
     using WebServer.Server.Enums;
+    using WebServer.Server.Http.Contracts;
 
-    public abstract class HttpResponse
+    public abstract class HttpResponse : IHttpResponse
     {
-        private readonly IView view;
-
-        private HttpResponse(HttpStatusCode statusCode)
+        protected HttpResponse()
         {
             this.Headers = new HttpHeaderCollection();
-            this.StatusCode = statusCode;
-        }
-        protected HttpResponse(string redirectUrl)
-            :this(HttpStatusCode.Found)
-        {
-            CoreValidator.ThrowIfNullOrEmpty(redirectUrl, nameof(redirectUrl));
-
-            this.Headers.Add(new HttpHeader("Location", redirectUrl));
-        }
-        protected HttpResponse(HttpStatusCode responseCode, IView view)
-            :this(responseCode)
-        {
-            this.view = view;
         }
 
-        private HttpHeaderCollection Headers { get; set; }
-        private HttpStatusCode StatusCode { get; set; }
-        private string StatusCodeMessage => this.StatusCode.ToString();
-
+        public HttpHeaderCollection Headers { get; set; }
+        public HttpStatusCode StatusCode { get; protected set; }
         public override string ToString()
         {
+            var statusCodeNumber = (int)this.StatusCode;
+
             var response = new StringBuilder();
+            response.AppendLine($"HTTP/1.1 {statusCodeNumber} {this.StatusCodeMessage}");
+            response.AppendLine(this.Headers.ToString());
+            response.AppendLine();
 
-            response.Append($"HTTP/1.1 {this.StatusCode} {this.StatusCodeMessage}")
-
-            return null;
+            return response.ToString();
         }
+
+        private string StatusCodeMessage => this.StatusCode.ToString();
     }
 }

@@ -29,7 +29,6 @@
         public string Url { get; private set; }
         public string Path { get; private set; }
         public IHttpHeaderCollection Headers { get; private set; }
-
         public IDictionary<string, string> UrlParameters { get; private set; }
         public void AddUrlParameter(string key, string value)
         {
@@ -38,11 +37,8 @@
 
             this.UrlParameters[key] = value;
         }
-
         public IDictionary<string, string> FormData { get; private set; }
         public IDictionary<string, string> QueryParameters { get; private set; }
-
-
 
         private void ParseRequest(string requestString)
         {
@@ -117,18 +113,27 @@
                 return;
             }
 
-            this.ParseQuery(this.Url, this.UrlParameters);
-        }
-        private void ParseQuery(string queryString, IDictionary<string, string> dict)
-        {
-            var query = queryString
+            var query = this.Url
                 .Split(new[] { '?' }, StringSplitOptions.RemoveEmptyEntries)
                 .Last();
 
-            if (!query.Contains('?'))
+            this.ParseQuery(query, this.UrlParameters);
+        }
+        private void ParseFormData(string formDataLine)
+        {
+            if (this.RequestMethod != HttpRequestMethod.Post)
             {
                 return;
             }
+
+            this.ParseQuery(formDataLine, this.QueryParameters);
+        }
+        private void ParseQuery(string query, IDictionary<string, string> dict)
+        {
+            //if (!query.Contains('?'))
+            //{
+            //    return;
+            //}
 
             var queryPairs = query.Split(new[] { '&' }, StringSplitOptions.RemoveEmptyEntries);
             foreach (var queryPair in queryPairs)
@@ -145,10 +150,6 @@
 
                 dict.Add(key, value);
             }
-        }
-        private void ParseFormData(string formDataLine)
-        {
-            this.ParseQuery(formDataLine, this.QueryParameters);
         }
     }
 }
