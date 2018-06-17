@@ -13,20 +13,19 @@
         {
             this.headers = new Dictionary<string, HttpHeader>();
         }
+
         public void Add(HttpHeader header)
         {
             CoreValidator.ThrowIfNull(header, nameof(header));
 
             this.headers[header.Key] = header;
         }
-
         public bool ContainsKey(string key)
         {
             CoreValidator.ThrowIfNull(key, nameof(key));
 
             return this.headers.ContainsKey(key);
         }
-
         public HttpHeader Get(string key)
         {
             CoreValidator.ThrowIfNull(key, nameof(key));
@@ -38,7 +37,6 @@
 
             return this.headers[key];
         }
-
         public override string ToString() => String.Join(Environment.NewLine, this.headers);
     }
 }

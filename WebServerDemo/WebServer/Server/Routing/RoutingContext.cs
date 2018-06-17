@@ -1,6 +1,5 @@
 ﻿namespace WebServer.Server.Routing
 {
-    using System;
     using System.Collections.Generic;
     using WebServer.Server.Common;
     using WebServer.Server.Handlers.Contracts;

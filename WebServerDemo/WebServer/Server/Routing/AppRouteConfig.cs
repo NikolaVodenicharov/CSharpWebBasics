@@ -4,7 +4,9 @@
     using System.Collections.Generic;
     using System.Linq;
     using WebServer.Server.Enums;
+    using WebServer.Server.Handlers;
     using WebServer.Server.Handlers.Contracts;
+    using WebServer.Server.Http.Contracts;
     using WebServer.Server.Routing.Contracts;
 
     public class AppRouteConfig : IAppRouteConfig
@@ -17,6 +19,32 @@
         }
 
         public IReadOnlyDictionary<HttpRequestMethod, IDictionary<string, IRequestHandler>> Routes => this.routes;
+        private Dictionary<HttpRequestMethod, IDictionary<string, IRequestHandler>> InitializeRoutes()
+        {
+            var initializedRoutes =
+                new Dictionary<HttpRequestMethod, IDictionary<string, IRequestHandler>>();
+
+            var requestMethods = Enum
+                .GetValues(typeof(HttpRequestMethod))
+                .Cast<HttpRequestMethod>();
+
+            foreach (HttpRequestMethod requestMethod in requestMethods)
+            {
+                initializedRoutes[requestMethod] = new Dictionary<string, IRequestHandler>();
+            }
+
+            return initializedRoutes;
+        }
+
+        public void Get(string route, Func<IHttpRequest, IHttpResponse> handler)
+        {
+            this.AddRoute(route, new GetHandler(handler));
+        }
+
+        public void Post(string route, Func<IHttpRequest, IHttpResponse> handler)
+        {
+            this.AddRoute(route, new PostHandler(handler));
+        }
 
         public void AddRoute(string route, IRequestHandler handler)
         {
@@ -34,23 +62,6 @@
             {
                 throw new InvalidOperationException("Invalid handler.");
             }
-        }
-
-        private Dictionary<HttpRequestMethod, IDictionary<string, IRequestHandler>> InitializeRoutes()
-        {
-            var initializeRoutes =
-                new Dictionary<HttpRequestMethod, IDictionary<string, IRequestHandler>>();
-
-            var requestMethods = Enum
-                .GetValues(typeof(HttpRequestMethod))
-                .Cast<HttpRequestMethod>();
-
-            foreach (HttpRequestMethod requestMethod in requestMethods)
-            {
-                initializeRoutes[requestMethod] = new Dictionary<string, IRequestHandler>();
-            }
-
-            return initializeRoutes;
         }
     }
 }

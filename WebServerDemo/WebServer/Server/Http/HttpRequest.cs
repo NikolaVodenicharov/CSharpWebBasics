@@ -42,9 +42,7 @@
 
         private void ParseRequest(string requestString)
         {
-            var lines = requestString.Split(
-                new[] { Environment.NewLine },
-                StringSplitOptions.RemoveEmptyEntries);
+            var lines = requestString.Split(Environment.NewLine);
 
             if (!lines.Any())
             {
@@ -64,6 +62,7 @@
             this.RequestMethod = this.ParseRequestMethod(firstLine[0]);
             this.Url = firstLine[1];
             this.Path = this.ParsePath(Url);
+
             this.ParseHeaders(lines);
             this.ParseParameters();
             this.ParseFormData(lines.Last());
@@ -79,11 +78,14 @@
                 throw new BadRequestException(BadRequestExceptionMessage);
             }
         }
-        private string ParsePath(string url) => 
-            url.Split(new[] { '?', '#' }, StringSplitOptions.RemoveEmptyEntries)[0];
+        private string ParsePath(string url)
+        {
+            return url.Split(new[] { '?', '#' }, StringSplitOptions.RemoveEmptyEntries)[0];
+        }
         private void ParseHeaders(string[] lines)
         {
             int endIndex = Array.IndexOf(lines, String.Empty);
+
             for (int i = 1; i < endIndex; i++)
             {
                 string[] headerArgs = lines[i].Split(
@@ -102,7 +104,6 @@
 
             if (!this.Headers.ContainsKey("Host"))
             {
-                // delete data in this.Headers ?
                 throw new BadRequestException(BadRequestExceptionMessage);
             }
         }

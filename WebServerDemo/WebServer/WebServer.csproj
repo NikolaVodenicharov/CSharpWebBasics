@@ -5,9 +5,4 @@
     <TargetFramework>netcoreapp2.0</TargetFramework>
   </PropertyGroup>
 
-  <ItemGroup>
-    <Folder Include="Application\Controllers\" />
-    <Folder Include="Application\Views\" />
-  </ItemGroup>
-
 </Project>

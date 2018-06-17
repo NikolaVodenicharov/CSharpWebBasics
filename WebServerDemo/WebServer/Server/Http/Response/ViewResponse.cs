@@ -1,6 +1,5 @@
 ﻿namespace WebServer.Server.Http.Response
 {
-    using System;
     using WebServer.Server.Contracts;
     using WebServer.Server.Enums;
     using WebServer.Server.Exceptions;
@@ -25,6 +24,7 @@
         {
             var statusCodeNumber = (int)statusCode;
 
+            // is for redirect, not for VIewResponse
             if (299 < statusCodeNumber && statusCodeNumber < 400) // <= 400 ?
             {
                 throw new InvalidResponseException("View responses need a status code below 300 or above 400.");

@@ -1,9 +1,6 @@
 ﻿namespace WebServer.Server.Http.Response
 {
-    using System;
     using System.Text;
-    using WebServer.Server.Common;
-    using WebServer.Server.Contracts;
     using WebServer.Server.Enums;
     using WebServer.Server.Http.Contracts;
 

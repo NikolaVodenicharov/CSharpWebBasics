@@ -1,20 +1,19 @@
 ﻿namespace WebServer.Server.Http
 {
-    using System;
     using WebServer.Server.Common;
     using WebServer.Server.Http.Contracts;
 
     public class HttpContext : IHttpContext
     {
-        private readonly IHttpRequest request;
+        private readonly IHttpRequest httpRequest;
 
-        public HttpContext(string requestString)
+        public HttpContext(IHttpRequest httpRequest)
         {
-            CoreValidator.ThrowIfNullOrEmpty(requestString, nameof(requestString));
+            CoreValidator.ThrowIfNull(httpRequest, nameof(httpRequest));
 
-            this.request = new HttpRequest(requestString);
+            this.httpRequest = httpRequest;
         }
 
-        public IHttpRequest Request => this.request;
+        public IHttpRequest Request => this.httpRequest;
     }
 }

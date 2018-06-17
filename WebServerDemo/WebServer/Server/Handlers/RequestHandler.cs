@@ -8,20 +8,20 @@
 
     public abstract class RequestHandler : IRequestHandler
     {
-        private readonly Func<IHttpRequest, IHttpResponse> handingFunc;
+        private readonly Func<IHttpRequest, IHttpResponse> handlingFunc;
 
-        protected RequestHandler(Func<IHttpRequest, IHttpResponse> handingFunc)
+        protected RequestHandler(Func<IHttpRequest, IHttpResponse> handlingFunc)
         {
-            CoreValidator.ThrowIfNull(handingFunc, nameof(handingFunc));
+            CoreValidator.ThrowIfNull(handlingFunc, nameof(handlingFunc));
 
-            this.handingFunc = handingFunc;
+            this.handlingFunc = handlingFunc;
         }
 
         public IHttpResponse Handle(IHttpContext context)
         {
-            var response = this.handingFunc(context.Request);
+            var response = this.handlingFunc(context.Request);
             response.Headers.Add(new HttpHeader("Content-Type", "text/plain"));
-
+             
             return response;
         }
     }

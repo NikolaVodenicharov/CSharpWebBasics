@@ -4,6 +4,7 @@
     using System.Collections.Generic;
     using System.Linq;
     using System.Text;
+    using System.Text.RegularExpressions;
     using WebServer.Server.Common;
     using WebServer.Server.Enums;
     using WebServer.Server.Routing.Contracts;
@@ -17,12 +18,11 @@
         {
             CoreValidator.ThrowIfNull(appRouteConfig, nameof(appRouteConfig));
 
-            this.routes = InitializeRoutes();
+            this.routes = this.InitializeRoutes();
             this.InitializeRouteConfig(appRouteConfig);
         }
 
-        public IDictionary<HttpRequestMethod, IDictionary<string, IRoutingContext>> Routes => throw new NotImplementedException();
-
+        public IDictionary<HttpRequestMethod, IDictionary<string, IRoutingContext>> Routes => this.routes;
         private IDictionary<HttpRequestMethod, IDictionary<string, IRoutingContext>> InitializeRoutes()
         {
             var initializedRoutes = 
@@ -76,18 +76,39 @@
 
             return result.ToString();
         }
-
         private void ParseTokens(string[] tokens, List<string> parameters, StringBuilder result)
         {
             for (int i = 0; i < tokens.Length; i++)
             {
-                var suffix = i == tokens.Length - 1 ? "$" : "/";
+                // block 1
+                var isLastToken = i == (tokens.Length - 1);
+                var suffix = isLastToken ? "$" : "/";
+
                 var currentToken = tokens[i];
 
                 if (!currentToken.StartsWith('{') && !currentToken.EndsWith('}'))
                 {
                     result.Append($"{currentToken}{suffix}");
+                    continue;
                 }
+
+                // block 2
+                var parameterRegex = new Regex("<\\w+>");
+                var parameterMatch = parameterRegex.Match(currentToken);
+
+                if (!parameterMatch.Success)
+                {
+                    throw new InvalidOperationException($"Route parameter in '{currentToken}' is not valid.");
+                }
+
+                // block 3
+                var match = parameterMatch.Value;  // .Groups[0].Value ?
+                var parameter = match.Substring(1, match.Length - 2);
+                parameters.Add(parameter);
+
+                // block 4
+                var currentTokenWithoutCurlyBrackets = currentToken.Substring(1, currentToken.Length - 2);
+                result.Append($"{currentTokenWithoutCurlyBrackets}{suffix}");
             }
         }
     }
