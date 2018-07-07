@@ -19,6 +19,7 @@
         }
 
         public IReadOnlyDictionary<HttpRequestMethod, IDictionary<string, IRequestHandler>> Routes => this.routes;
+
         private Dictionary<HttpRequestMethod, IDictionary<string, IRequestHandler>> InitializeRoutes()
         {
             var initializedRoutes =
@@ -38,30 +39,17 @@
 
         public void Get(string route, Func<IHttpRequest, IHttpResponse> handler)
         {
-            this.AddRoute(route, new GetHandler(handler));
+            this.AddRoute(route, HttpRequestMethod.Get, new RequestHandler(handler));
         }
 
         public void Post(string route, Func<IHttpRequest, IHttpResponse> handler)
         {
-            this.AddRoute(route, new PostHandler(handler));
+            this.AddRoute(route, HttpRequestMethod.Post, new RequestHandler(handler));
         }
 
-        public void AddRoute(string route, IRequestHandler handler)
+        public void AddRoute(string route, HttpRequestMethod method, IRequestHandler handler)
         {
-            var handlerName = handler.GetType().Name.ToLower();
-
-            if (handlerName.Contains("get"))
-            {
-                this.routes[HttpRequestMethod.Get].Add(route, handler);
-            }
-            else if (handlerName.Contains("post"))
-            {
-                this.routes[HttpRequestMethod.Post].Add(route, handler);
-            }
-            else
-            {
-                throw new InvalidOperationException("Invalid handler.");
-            }
+            this.routes[method].Add(route, handler);
         }
     }
 }

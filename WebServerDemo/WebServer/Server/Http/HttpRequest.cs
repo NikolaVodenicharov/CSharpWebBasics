@@ -19,6 +19,7 @@
 
             this.FormData = new Dictionary<string, string>();
             this.Headers = new HttpHeaderCollection();
+            this.Cookies = new HttpCookieCollection();
             this.QueryParameters = new Dictionary<string, string>();
             this.UrlParameters = new Dictionary<string, string>();
 
@@ -29,6 +30,7 @@
         public string Url { get; private set; }
         public string Path { get; private set; }
         public IHttpHeaderCollection Headers { get; private set; }
+        public IHttpCookieCollection Cookies { get; private set; }
         public IDictionary<string, string> UrlParameters { get; private set; }
         public void AddUrlParameter(string key, string value)
         {
@@ -64,6 +66,7 @@
             this.Path = this.ParsePath(Url);
 
             this.ParseHeaders(lines);
+            this.ParseCookies();
             this.ParseParameters();
             this.ParseFormData(lines.Last());
         }
@@ -102,9 +105,42 @@
                 this.Headers.Add(new HttpHeader(key, value));
             }
 
-            if (!this.Headers.ContainsKey("Host"))
+            if (!this.Headers.ContainsKey(HttpHeader.Host))
             {
                 throw new BadRequestException(BadRequestExceptionMessage);
+            }
+        }
+        private void ParseCookies()
+        {
+            if (this.Headers.ContainsKey(HttpHeader.Cookie))
+            {
+                var allCookies = this.Headers.Get(HttpHeader.Cookie);
+
+                foreach (var cookie in allCookies)
+                {
+                    var cookieKeyValue = cookie
+                        .Value
+                        .Split(new[] { ';' }, StringSplitOptions.RemoveEmptyEntries)
+                        .FirstOrDefault();
+
+                    if (cookieKeyValue == null || !cookieKeyValue.Contains('='))
+                    {
+                        continue;
+                    }
+
+                    var cookieKeyValueParts = cookieKeyValue
+                        .Split(new[] { '=' }, StringSplitOptions.RemoveEmptyEntries);
+
+                    if (cookieKeyValueParts.Length != 2)
+                    {
+                        continue;
+                    }
+
+                    var key = cookieKeyValueParts[0];
+                    var value = cookieKeyValueParts[1];
+
+                    this.Cookies.Add(new HttpCookie(key, value, false));
+                }
             }
         }
         private void ParseParameters()

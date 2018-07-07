@@ -9,15 +9,19 @@
         protected HttpResponse()
         {
             this.Headers = new HttpHeaderCollection();
+            this.Cookies = new HttpCookieCollection();
         }
 
-        public HttpHeaderCollection Headers { get; set; }
+        public IHttpHeaderCollection Headers { get; }
+        public IHttpCookieCollection Cookies { get; }
         public HttpStatusCode StatusCode { get; protected set; }
+
         public override string ToString()
         {
             var statusCodeNumber = (int)this.StatusCode;
 
             var response = new StringBuilder();
+
             response.AppendLine($"HTTP/1.1 {statusCodeNumber} {this.StatusCodeMessage}");
             response.AppendLine(this.Headers.ToString());
             response.AppendLine();

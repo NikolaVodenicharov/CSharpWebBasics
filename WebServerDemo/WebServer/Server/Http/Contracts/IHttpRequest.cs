@@ -7,6 +7,7 @@
     {
         IDictionary<string, string> FormData { get; }
         IHttpHeaderCollection Headers { get; }
+        IHttpCookieCollection Cookies { get; }
         string Path { get; }
         IDictionary<string, string> QueryParameters { get; }
         HttpRequestMethod RequestMethod { get; }

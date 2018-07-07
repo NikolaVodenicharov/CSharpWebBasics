@@ -8,10 +8,11 @@
     {
         private readonly IView view;
 
-        public ViewResponse(HttpStatusCode responseCode, IView view)
+        public ViewResponse(HttpStatusCode statusCode, IView view)
         {
+            this.ValidateStatusCode(statusCode);
 
-            this.StatusCode = responseCode;
+            this.StatusCode = statusCode;
             this.view = view;
         }
 

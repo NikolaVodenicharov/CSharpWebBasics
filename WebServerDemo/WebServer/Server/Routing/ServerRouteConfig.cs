@@ -63,11 +63,11 @@
         private string ParseRoute(string route, List<string> parameters)
         {
             var result = new StringBuilder();
-            result.Append("^");
+            result.Append("^/");
 
             if (route == "/")
             {
-                result.Append("/$");
+                result.Append("$");
                 return result.ToString();
             }
 
