@@ -41,6 +41,7 @@
         }
         public IDictionary<string, string> FormData { get; private set; }
         public IDictionary<string, string> QueryParameters { get; private set; }
+        public IHttpSession Session { get; set; }
 
         private void ParseRequest(string requestString)
         {
@@ -67,6 +68,7 @@
 
             this.ParseHeaders(lines);
             this.ParseCookies();
+            this.SetSession();
             this.ParseParameters();
             this.ParseFormData(lines.Last());
         }
@@ -118,29 +120,51 @@
 
                 foreach (var cookie in allCookies)
                 {
-                    var cookieKeyValue = cookie
+                    if (!cookie.Value.Contains('='))
+                    {
+                        return;
+                    }
+
+                    var cookieParts = cookie
                         .Value
                         .Split(new[] { ';' }, StringSplitOptions.RemoveEmptyEntries)
-                        .FirstOrDefault();
+                        .ToList();
 
-                    if (cookieKeyValue == null || !cookieKeyValue.Contains('='))
+                    if (!cookieParts.Any())
                     {
                         continue;
                     }
 
-                    var cookieKeyValueParts = cookieKeyValue
-                        .Split(new[] { '=' }, StringSplitOptions.RemoveEmptyEntries);
-
-                    if (cookieKeyValueParts.Length != 2)
+                    foreach (var cookiePart in cookieParts)
                     {
-                        continue;
+                        var cookieKeyValueParts = cookiePart
+                            .Split(new[] { '=' }, StringSplitOptions.RemoveEmptyEntries);
+
+                        if (cookieKeyValueParts.Length != 2)
+                        {
+                            continue;
+                        }
+
+                        var key = cookieKeyValueParts[0].Trim();
+                        var value = cookieKeyValueParts[1].Trim();
+
+                        this.Cookies.Add(new HttpCookie(key, value, false));
                     }
-
-                    var key = cookieKeyValueParts[0];
-                    var value = cookieKeyValueParts[1];
-
-                    this.Cookies.Add(new HttpCookie(key, value, false));
                 }
+            }
+        }
+        private void SetSession()
+        {
+            // Cokie: SessionID=value;
+
+            
+
+            if (this.Cookies.Contains(SessionStore.SessionCookieKey))
+            {
+                var cookie = this.Cookies.Get(SessionStore.SessionCookieKey);
+                var sessionId = cookie.Value;
+
+                this.Session = SessionStore.Get(sessionId);
             }
         }
         private void ParseParameters()

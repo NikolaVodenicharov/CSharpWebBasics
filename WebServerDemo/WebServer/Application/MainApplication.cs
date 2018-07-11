@@ -9,7 +9,14 @@
     {
         public void Configure(IAppRouteConfig appRouteConfig)
         {
-            appRouteConfig.Get("/", request => new HomeController().Index());
+            appRouteConfig.Get(
+                "/", 
+                request => new HomeController().Index());
+
+            appRouteConfig.Get(
+                "testsession",
+                request => new HomeController().SessionTest(request));
         }
+
     }
 }

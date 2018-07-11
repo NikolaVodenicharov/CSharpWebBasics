@@ -1,0 +1,18 @@
+﻿namespace WebServer.Server.Http
+{
+    using System;
+    using System.Collections.Concurrent;
+
+    public static class SessionStore
+    {
+        public const string SessionCookieKey = "MY_SID";
+
+        private static readonly ConcurrentDictionary<string, HttpSession> sessions =
+            new ConcurrentDictionary<string, HttpSession>();
+
+        public static HttpSession Get (string id)
+        {
+            return sessions.GetOrAdd(id, _ => new HttpSession(id));
+        }
+    }
+}
