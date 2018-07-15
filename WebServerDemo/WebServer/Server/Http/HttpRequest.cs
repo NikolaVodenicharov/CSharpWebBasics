@@ -31,6 +31,7 @@
         public string Path { get; private set; }
         public IHttpHeaderCollection Headers { get; private set; }
         public IHttpCookieCollection Cookies { get; private set; }
+        public IHttpSession Session { get; set; }
         public IDictionary<string, string> UrlParameters { get; private set; }
         public void AddUrlParameter(string key, string value)
         {
@@ -41,7 +42,6 @@
         }
         public IDictionary<string, string> FormData { get; private set; }
         public IDictionary<string, string> QueryParameters { get; private set; }
-        public IHttpSession Session { get; set; }
 
         private void ParseRequest(string requestString)
         {
@@ -69,7 +69,7 @@
             this.ParseHeaders(lines);
             this.ParseCookies();
             this.SetSession();
-            this.ParseParameters();
+            this.ParseUrlParameters();
             this.ParseFormData(lines.Last());
         }
         private HttpRequestMethod ParseRequestMethod(string requestMethod)
@@ -167,7 +167,7 @@
                 this.Session = SessionStore.Get(sessionId);
             }
         }
-        private void ParseParameters()
+        private void ParseUrlParameters()
         {
             if (!this.Url.Contains('?'))
             {
@@ -178,7 +178,7 @@
                 .Split(new[] { '?' }, StringSplitOptions.RemoveEmptyEntries)
                 .Last();
 
-            this.ParseQuery(query, this.UrlParameters);
+            this.ParseQuery(query, this.UrlParameters);     // we dont add anything to "QueryParameters" 
         }
         private void ParseFormData(string formDataLine)
         {
@@ -187,23 +187,27 @@
                 return;
             }
 
-            this.ParseQuery(formDataLine, this.QueryParameters);
+            this.ParseQuery(formDataLine, this.FormData);        // my
+            // this.ParseQuery(formDataLine, this.QueryParameters);    // original
         }
-        private void ParseQuery(string query, IDictionary<string, string> dict)
+        private void ParseQuery(string queryString, IDictionary<string, string> dict)
         {
-            //if (!query.Contains('?'))
-            //{
-            //    return;
-            //}
+            if (!queryString.Contains('='))
+            {
+                return;
+            }
 
-            var queryPairs = query.Split(new[] { '&' }, StringSplitOptions.RemoveEmptyEntries);
+            var queryPairs = queryString
+                .Split(new[] { '&' }, StringSplitOptions.RemoveEmptyEntries);
+
             foreach (var queryPair in queryPairs)
             {
-                var pair = queryPair.Split(new[] { '=' }, StringSplitOptions.RemoveEmptyEntries);
+                var pair = queryPair
+                    .Split(new[] { '=' }, StringSplitOptions.RemoveEmptyEntries);
 
                 if (pair.Length != 2)
                 {
-                    return; // or throw exception ?
+                    return;
                 }
 
                 var key = WebUtility.UrlDecode(pair[0]);
