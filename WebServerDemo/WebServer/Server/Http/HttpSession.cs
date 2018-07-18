@@ -30,6 +30,12 @@
         {
             this.values.Clear();
         }
+
+        public bool Contains(string key)
+        {
+            return this.values.ContainsKey(key);
+        }
+
         public object Get(string key)
         {
             CoreValidator.ThrowIfNullOrEmpty(key, nameof(key));

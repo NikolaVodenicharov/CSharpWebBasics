@@ -3,9 +3,9 @@
     using WebServer.Server.Common;
     using WebServer.Server.Enums;
 
-    public class RedirectRespose : HttpResponse
+    public class RedirectResponse : HttpResponse
     {
-        public RedirectRespose(string redirectUrl) 
+        public RedirectResponse(string redirectUrl) 
         {
             CoreValidator.ThrowIfNullOrEmpty(redirectUrl, nameof(redirectUrl));
 

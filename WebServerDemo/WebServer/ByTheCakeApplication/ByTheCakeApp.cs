@@ -11,7 +11,7 @@
         {
             appRouteConfig.Get(
                 "/",
-                req => new HomeController().Index());
+                request => new HomeController().Index());
 
             appRouteConfig.Get(
                 "/about",
@@ -29,7 +29,33 @@
 
             appRouteConfig.Get(
                 "/search",
-                request => new CakesController().Search(request.UrlParameters));
+                request => new CakesController().Search(request));
+
+            appRouteConfig.Get(
+                "/login",
+                request => new AccountController().Login());
+
+            appRouteConfig.Post(
+                "/login",
+                request => new AccountController().Login(request));
+
+            appRouteConfig.Post(
+                "/logout",
+                request => new AccountController().Logout(request));
+
+            appRouteConfig.Get(
+                "/shopping/add/{(?<id>[0-9]+)]",
+                request => new ShoppingController().AddToCard(request));
+
+            appRouteConfig.Get(
+                "/cart",
+                request => new ShoppingController().ShowCart(request));
+
+            appRouteConfig.Post(
+                "/shopping/finish-order",
+                request => new ShoppingController().FinishOrder(request));
+
+
         }
     }
 }

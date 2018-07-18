@@ -20,7 +20,6 @@
             this.FormData = new Dictionary<string, string>();
             this.Headers = new HttpHeaderCollection();
             this.Cookies = new HttpCookieCollection();
-            this.QueryParameters = new Dictionary<string, string>();
             this.UrlParameters = new Dictionary<string, string>();
 
             this.ParseRequest(requestString);
@@ -41,7 +40,6 @@
             this.UrlParameters[key] = value;
         }
         public IDictionary<string, string> FormData { get; private set; }
-        public IDictionary<string, string> QueryParameters { get; private set; }
 
         private void ParseRequest(string requestString)
         {
@@ -156,9 +154,6 @@
         private void SetSession()
         {
             // Cokie: SessionID=value;
-
-            
-
             if (this.Cookies.Contains(SessionStore.SessionCookieKey))
             {
                 var cookie = this.Cookies.Get(SessionStore.SessionCookieKey);
@@ -178,7 +173,7 @@
                 .Split(new[] { '?' }, StringSplitOptions.RemoveEmptyEntries)
                 .Last();
 
-            this.ParseQuery(query, this.UrlParameters);     // we dont add anything to "QueryParameters" 
+            this.ParseQuery(query, this.UrlParameters);
         }
         private void ParseFormData(string formDataLine)
         {
@@ -187,8 +182,7 @@
                 return;
             }
 
-            this.ParseQuery(formDataLine, this.FormData);        // my
-            // this.ParseQuery(formDataLine, this.QueryParameters);    // original
+            this.ParseQuery(formDataLine, this.FormData);
         }
         private void ParseQuery(string queryString, IDictionary<string, string> dict)
         {

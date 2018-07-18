@@ -1,10 +1,12 @@
 ﻿namespace WebServer.Server.Handlers
 {
+    using System;
     using System.Text.RegularExpressions;
     using WebServer.Server.Common;
     using WebServer.Server.Handlers.Contracts;
-    using WebServer.Server.Handlers.Response;
+    using WebServer.Server.Http;
     using WebServer.Server.Http.Contracts;
+    using WebServer.Server.Http.Response;
     using WebServer.Server.Routing.Contracts;
 
     public class HttpHandler : IRequestHandler
@@ -19,32 +21,49 @@
 
         public IHttpResponse Handle(IHttpContext context)
         {
-            var requestMethod = context.Request.RequestMethod;
-            var requestPath = context.Request.Path;
-            var registeredRoutes = this.serverRouteConfig.Routes[requestMethod];
-
-            foreach (var registeredRoute in registeredRoutes)
+            try
             {
-                var routePattern = registeredRoute.Key;
-                var routingContext = registeredRoute.Value;
+                // check if user is authenticated          
+                var loginPath = "/login";
 
-                var routeRegex = new Regex(routePattern);
-                var match = routeRegex.Match(requestPath);
-
-                if (!match.Success)
+                if (context.Request.Path != loginPath &&
+                    !context.Request.Session.Contains(SessionStore.CurrentUserKey))
                 {
-                    continue;
+                    return new RedirectResponse(loginPath);
                 }
 
-                var parameters = routingContext.Parameters;
 
-                foreach (var parameter in parameters)
+                var requestMethod = context.Request.RequestMethod;
+                var requestPath = context.Request.Path;
+                var registeredRoutes = this.serverRouteConfig.Routes[requestMethod];
+
+                foreach (var registeredRoute in registeredRoutes)
                 {
-                    var parameterValue = match.Groups[parameter].Value;
-                    context.Request.AddUrlParameter(parameter, parameterValue);
-                }
+                    var routePattern = registeredRoute.Key;
+                    var routingContext = registeredRoute.Value;
 
-                return routingContext.Handler.Handle(context);
+                    var routeRegex = new Regex(routePattern);
+                    var match = routeRegex.Match(requestPath);
+
+                    if (!match.Success)
+                    {
+                        continue;
+                    }
+
+                    var parameters = routingContext.Parameters;
+
+                    foreach (var parameter in parameters)
+                    {
+                        var parameterValue = match.Groups[parameter].Value;
+                        context.Request.AddUrlParameter(parameter, parameterValue);
+                    }
+
+                    return routingContext.Handler.Handle(context);
+                }
+            }
+            catch (Exception ex)
+            {
+                return new InternalServerErrorResponse(ex);
             }
 
             return new NotFoundResponse();
