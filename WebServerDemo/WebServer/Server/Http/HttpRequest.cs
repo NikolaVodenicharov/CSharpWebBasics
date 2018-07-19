@@ -192,12 +192,12 @@
             }
 
             var queryPairs = queryString
-                .Split(new[] { '&' }, StringSplitOptions.RemoveEmptyEntries);
+                .Split(new[] { '&' });
 
             foreach (var queryPair in queryPairs)
             {
                 var pair = queryPair
-                    .Split(new[] { '=' }, StringSplitOptions.RemoveEmptyEntries);
+                    .Split(new[] { '=' });
 
                 if (pair.Length != 2)
                 {

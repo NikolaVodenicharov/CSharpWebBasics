@@ -4,7 +4,7 @@
 
     using WebServer.ByTheCakeApplication.Data;
     using WebServer.ByTheCakeApplication.Infrastructure;
-    using WebServer.ByTheCakeApplication.Models;
+    using WebServer.ByTheCakeApplication.ViewModels;
     using WebServer.Server.Http.Contracts;
     using WebServer.Server.Http.Response;
 

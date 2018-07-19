@@ -4,7 +4,7 @@
     using System.Collections.Generic;
     using System.IO;
     using System.Linq;
-    using WebServer.ByTheCakeApplication.Models;
+    using WebServer.ByTheCakeApplication.ViewModels;
 
     public class CakesData
     {

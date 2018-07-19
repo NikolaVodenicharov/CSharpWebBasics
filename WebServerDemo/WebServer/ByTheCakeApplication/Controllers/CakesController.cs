@@ -5,7 +5,7 @@
     using System.Linq;
     using WebServer.ByTheCakeApplication.Data;
     using WebServer.ByTheCakeApplication.Infrastructure;
-    using WebServer.ByTheCakeApplication.Models;
+    using WebServer.ByTheCakeApplication.ViewModels;
     using WebServer.Server.Http.Contracts;
 
     public class CakesController : Controller
@@ -22,7 +22,6 @@
 
         private const string Block = "block";
         private const string None = "none";
-
 
         private readonly CakesData cakesData;
         

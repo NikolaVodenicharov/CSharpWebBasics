@@ -1,6 +1,7 @@
 ﻿namespace WebServer.Server.Handlers
 {
     using System;
+    using System.Linq;
     using System.Text.RegularExpressions;
     using WebServer.Server.Common;
     using WebServer.Server.Handlers.Contracts;
@@ -23,13 +24,13 @@
         {
             try
             {
-                // check if user is authenticated          
-                var loginPath = "/login";
+                // check if user is authenticated
+                var anonymousPaths = new[] { "/login", "/register" };
 
-                if (context.Request.Path != loginPath &&
+                if (!anonymousPaths.Contains(context.Request.Path) &&
                     !context.Request.Session.Contains(SessionStore.CurrentUserKey))
                 {
-                    return new RedirectResponse(loginPath);
+                    return new RedirectResponse(anonymousPaths.First());
                 }
 
 

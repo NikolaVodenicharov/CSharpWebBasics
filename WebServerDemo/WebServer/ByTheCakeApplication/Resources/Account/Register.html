@@ -1,0 +1,23 @@
+﻿<h2>Register</h2>
+
+<form method="post">
+    <label for="username">Username: </label>
+    <input required id="username" type="text" name="username" placeholder="Username" />
+    <br />
+
+    <label for="password">Password: </label>
+    <input required id="password" type="password" name="password" placeholder="Password" />
+    <br />
+
+    <label for="confirmPassword">Confirm password: </label>
+    <input required id="confirmPassword" type="password" name="confirmPassword" placeholder="Password" />
+    <br />
+
+    <input type="submit" value="Register" />
+</form>
+
+<div style="display: {{{showError}}}; color: red">
+    {{{error}}}
+</div>
+
+You already have an account ? <a href="/login">Login here!</a>
