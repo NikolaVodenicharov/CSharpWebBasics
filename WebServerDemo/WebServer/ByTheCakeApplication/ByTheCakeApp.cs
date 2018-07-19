@@ -5,6 +5,7 @@
     using WebServer.ByTheCakeApplication.Controllers;
     using WebServer.ByTheCakeApplication.Data;
     using WebServer.ByTheCakeApplication.ViewModels.Account;
+    using WebServer.ByTheCakeApplication.ViewModels.Products;
     using WebServer.Server.Contracts;
     using WebServer.Server.Routing.Contracts;
 
@@ -30,17 +31,23 @@
 
             appRouteConfig.Get(
                 "/add",
-                request => new CakesController().Add());
+                request => new ProductsController().Add());
 
             appRouteConfig.Post(
                 "/add",
-                request => new CakesController().Add(
-                    request.FormData["name"], 
-                    request.FormData["price"]));
+                request => new ProductsController().Add(
+                    new AddProductViewModel(
+                        request.FormData["name"], 
+                        decimal.Parse(request.FormData["price"]),
+                        request.FormData["imageUrl"])));
 
             appRouteConfig.Get(
                 "/search",
-                request => new CakesController().Search(request));
+                request => new ProductsController().Search(request));
+
+            appRouteConfig.Get(
+                "/products/{(?<id>[0-9]+)}",
+                request => new ProductsController().Details(int.Parse(request.UrlParameters["id"])));
 
             appRouteConfig.Get(
                 "/register",
@@ -50,12 +57,10 @@
                 "/register",
                 request => new AccountController().Register(
                     request, 
-                    new RegisterUserViewModel
-                    (
+                    new RegisterUserViewModel(
                         request.FormData["username"],
                         request.FormData["password"],
-                        request.FormData["confirmPassword"]
-                    )));
+                        request.FormData["confirmPassword"])));
 
             appRouteConfig.Get(
                 "/login",
@@ -65,11 +70,9 @@
                 "/login",
                 request => new AccountController().Login(
                     request,
-                    new LoginViewModel
-                    (
+                    new LoginViewModel(
                         request.FormData["username"],
-                        request.FormData["password"]
-                    )));
+                        request.FormData["password"])));
 
             appRouteConfig.Get(
                 "/profile",
@@ -80,7 +83,7 @@
                 request => new AccountController().Logout(request));
 
             appRouteConfig.Get(
-                "/shopping/add/{(?<id>[0-9]+)]",
+                "/shopping/add/{(?<id>[0-9]+)}",
                 request => new ShoppingController().AddToCard(request));
 
             appRouteConfig.Get(

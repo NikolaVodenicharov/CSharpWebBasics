@@ -12,24 +12,13 @@
 
     public class AccountController : Controller
     {
-        private const string HtmlAccountLogin = @"account\login";
-        private const string HtmlAccountRegister = @"account\register";
-        private const string HtmlAccountProfile = @"account\profile";
+        private const string PathAccountProfile = @"account\profile";
 
         private const string FormUsernameKey = "username";
         private const string FormPasswordKey = "password";
 
-        private const string ShowError = "showError";
-        private const string Error = "error";
-
         private const string MessageEmptyField = "You have empty fields";
-        private const string MessageInvalidUserDetails = "Invalid user details";
         private const string MessageUsernameIsBusy = "This username is taken.";
-
-        private const string AuthenticateDisplay = "authDisplay";   // duplicated with Controller constant
-
-        private const string None = "none";     // duplicated with CakesController constant
-        private const string Block = "block";   // duplicated with CakesController constant
 
         private readonly IUserService userService;
 
@@ -41,8 +30,7 @@
         public IHttpResponse Register()
         {
             this.SetDefaultViewData();
-
-            return this.FileViewResponse(HtmlAccountRegister);
+            return this.RegisterResponse();
         }
         public IHttpResponse Register(IHttpRequest request, RegisterUserViewModel model)
         {
@@ -53,10 +41,9 @@
                 model.Password.Length < 3 ||
                 model.ConfirmPassword != model.Password)
             {
-                this.ViewData[ShowError] = Block;
-                this.ViewData[Error] = MessageInvalidUserDetails;
+                this.ShowError(MessageInvalidUserDetails);
 
-                return this.FileViewResponse(HtmlAccountRegister);
+                return this.RegisterResponse();
             }
 
             var success = this.userService.Create(model.Username, model.Password);
@@ -69,28 +56,30 @@
             }
             else
             {
-                this.ViewData[ShowError] = Block;
-                this.ViewData[Error] = MessageUsernameIsBusy;
+                this.ShowError(MessageUsernameIsBusy);
 
-                return this.FileViewResponse(HtmlAccountRegister);
+                return this.RegisterResponse();
             }
+        }
+        private IHttpResponse RegisterResponse()
+        {
+            return FileViewResponse(@"account\register");
         }
 
         public IHttpResponse Login()
         {
             this.SetDefaultViewData();
 
-            return FileViewResponse(HtmlAccountLogin);
+            return this.LoginResponse();
         }
         public IHttpResponse Login(IHttpRequest request, LoginViewModel model)
         {
             if (string.IsNullOrWhiteSpace(model.Username) ||
                 string.IsNullOrWhiteSpace(model.Password))
             {
-                this.ViewData[ShowError] = Block;
-                this.ViewData[Error] = MessageEmptyField;
+                this.ShowError(MessageEmptyField);
 
-                return FileViewResponse(HtmlAccountLogin);
+                return this.LoginResponse();
             }
 
             var success = this.userService.Find(model.Username, model.Password);
@@ -103,11 +92,14 @@
             }
             else
             {
-                this.ViewData[ShowError] = Block;
-                this.ViewData[Error] = MessageInvalidUserDetails;
+                this.ShowError(MessageInvalidUserDetails);
 
-                return FileViewResponse(HtmlAccountLogin);
+                return this.LoginResponse();
             }
+        }
+        private IHttpResponse LoginResponse()
+        {
+            return FileViewResponse(@"account\login");
         }
 
         public IHttpResponse Profile(IHttpRequest request)
@@ -130,7 +122,7 @@
             this.ViewData["registeredDate"] = profile.RegistrationDate.ToShortDateString();
             this.ViewData["totalOrders"] = profile.TotalOrders.ToString();
 
-            return this.FileViewResponse(HtmlAccountProfile);
+            return this.FileViewResponse(PathAccountProfile);
         }
 
         public IHttpResponse Logout(IHttpRequest request)
@@ -142,8 +134,8 @@
 
         private void SetDefaultViewData()
         {
-            this.ViewData[ShowError] = None;
-            this.ViewData[AuthenticateDisplay] = None;
+            this.HideErrorDiv();
+            this.ViewData[HttpAuthenticateDisplay] = HtmlNone;
         }
         private void LoginUser(IHttpRequest request, string username)
         {

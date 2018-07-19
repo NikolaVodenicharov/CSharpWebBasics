@@ -15,14 +15,21 @@
         private const string Layout = "layout";
         private const string ContentPlaceholder = "{{{content}}}";
 
-        private const string AuthenticateDisplay = "authDisplay";
-        private const string Block = "block";
+        protected const string HttpAuthenticateDisplay = "authDisplay";
+
+        private const string HtmlShowError = "showError";
+        private const string HtmlError = "error";
+
+        protected const string HtmlBlock = "block";
+        protected const string HtmlNone = "none";
+
+        protected const string MessageInvalidUserDetails = "Invalid user details";
 
         protected Controller()
         {
             this.ViewData = new Dictionary<string, string>
             {
-                [AuthenticateDisplay] = Block
+                [HttpAuthenticateDisplay] = HtmlBlock
             };
         }
 
@@ -41,6 +48,16 @@
             }
 
             return new ViewResponse(HttpStatusCode.Ok, new FileView(result));
+        }
+
+        protected void HideErrorDiv()
+        {
+            this.ViewData[HtmlShowError] = HtmlNone;
+        }
+        protected void ShowError(string errorMessage)
+        {
+            this.ViewData[HtmlShowError] = HtmlBlock;
+            this.ViewData[HtmlError] = errorMessage;
         }
 
         private string ProcessFileHtml(string fileName)

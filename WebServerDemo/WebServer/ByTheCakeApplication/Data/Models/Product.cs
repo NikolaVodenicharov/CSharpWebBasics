@@ -6,6 +6,13 @@
 
     public class Product
     {
+        public Product(string name, decimal price, string imageUrl)
+        {
+            this.Name = name;
+            this.Price = price;
+            this.ImageUrl = imageUrl;
+        }
+
         public int Id { get; set; }
 
         [Required]

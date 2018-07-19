@@ -46,7 +46,7 @@ namespace WebServer.ByTheCakeApplication.Data.Migrations
 
                     b.HasIndex("ProductId");
 
-                    b.ToTable("OrderProduct");
+                    b.ToTable("OrdersProducts");
                 });
 
             modelBuilder.Entity("WebServer.ByTheCakeApplication.Data.Models.Product", b =>
@@ -67,7 +67,7 @@ namespace WebServer.ByTheCakeApplication.Data.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Product");
+                    b.ToTable("Products");
                 });
 
             modelBuilder.Entity("WebServer.ByTheCakeApplication.Data.Models.User", b =>
