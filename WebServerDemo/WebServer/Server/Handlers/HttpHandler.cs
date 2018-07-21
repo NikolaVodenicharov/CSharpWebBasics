@@ -27,12 +27,25 @@
                 // check if user is authenticated
                 var anonymousPaths = new[] { "/login", "/register" };
 
-                if (!anonymousPaths.Contains(context.Request.Path) &&
-                    !context.Request.Session.Contains(SessionStore.CurrentUserKey))
+                bool containsPath = anonymousPaths.Contains(context.Request.Path);
+
+                bool containsSession = false;               // not sure why we have that part with session contains.
+                if (context.Request.Session != null)
+                {
+                    containsSession = context.Request.Session.Contains(SessionStore.CurrentUserKey);
+                }
+
+                if (!containsPath &&
+                    !containsSession)
                 {
                     return new RedirectResponse(anonymousPaths.First());
                 }
 
+                //if (!anonymousPaths.Contains(context.Request.Path) &&
+                //    !context.Request.Session.Contains(SessionStore.CurrentUserKey))
+                //{
+                //    return new RedirectResponse(anonymousPaths.First());
+                //}
 
                 var requestMethod = context.Request.RequestMethod;
                 var requestPath = context.Request.Path;

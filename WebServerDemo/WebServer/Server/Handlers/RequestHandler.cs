@@ -20,6 +20,7 @@
         public IHttpResponse Handle(IHttpContext context)
         {
             string sessionIdToSend = null;
+
             if (!context.Request.Cookies.Contains(SessionStore.SessionCookieKey))
             {
                 var sessionId = Guid.NewGuid().ToString();
