@@ -11,5 +11,9 @@
         IEnumerable<ProductListingViewModel> All(string searchTherm = null);
 
         ProductDetailsViewModel FindById(int id);
+
+        bool IsExisting(int id);
+
+        IEnumerable<ProductInCartViewModel> FindProductInCart(IEnumerable<int> productIds);
     }
 }

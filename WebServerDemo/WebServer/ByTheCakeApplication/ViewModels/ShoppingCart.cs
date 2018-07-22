@@ -1,12 +1,11 @@
 ﻿namespace WebServer.ByTheCakeApplication.ViewModels
 {
-    using System;
     using System.Collections.Generic;
 
     public class ShoppingCart
     {
         public const string SessionKey = "%^Current_Shopping_Cart^%";
 
-        public List<Cake> Orders { get; private set; } = new List<Cake>();
+        public List<int> ProductIds { get; private set; } = new List<int>();
     }
 }

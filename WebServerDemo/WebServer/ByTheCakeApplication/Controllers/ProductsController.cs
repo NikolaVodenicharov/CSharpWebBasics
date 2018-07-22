@@ -102,9 +102,9 @@
         {
             var shoppingCart = request.Session.Get<ShoppingCart>(ShoppingCart.SessionKey);
 
-            if (shoppingCart.Orders.Any())
+            if (shoppingCart.ProductIds.Any())
             {
-                var productsCount = shoppingCart.Orders.Count;
+                var productsCount = shoppingCart.ProductIds.Count;
                 var productSuffix = productsCount != 1 ? "products" : "product";
 
                 this.ViewData[HtmlShowCart] = HtmlBlock;

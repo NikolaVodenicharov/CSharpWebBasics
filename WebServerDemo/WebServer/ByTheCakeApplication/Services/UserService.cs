@@ -33,6 +33,18 @@
             }
         }
 
+        public int GetUserId(string username)
+        {
+            using (var db = new ByTheCakeDbContext())
+            {
+                return db
+                    .Users
+                    .Where(u => u.Username == username)
+                    .Select(u => u.Id)
+                    .FirstOrDefault();
+            }
+        }
+
         public ProfileViewModel Profile(string username)
         {
             using (var db = new ByTheCakeDbContext())
