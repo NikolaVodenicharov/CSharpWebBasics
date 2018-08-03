@@ -9,6 +9,7 @@
     public interface IAppRouteConfig
     {
         IReadOnlyDictionary<HttpRequestMethod, IDictionary<string, IRequestHandler>> Routes { get; }
+        ICollection<string> AnonymousPaths { get; }
 
         void Get(string route, Func<IHttpRequest, IHttpResponse> handler);
         void Post(string route, Func<IHttpRequest, IHttpResponse> handler);

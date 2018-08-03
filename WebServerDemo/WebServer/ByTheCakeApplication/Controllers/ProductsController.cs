@@ -2,14 +2,13 @@
 {
     using System;
     using System.Linq;
-    using WebServer.ByTheCakeApplication.Infrastructure;
     using WebServer.ByTheCakeApplication.Services;
     using WebServer.ByTheCakeApplication.ViewModels;
     using WebServer.ByTheCakeApplication.ViewModels.Products;
     using WebServer.Server.Http.Contracts;
     using WebServer.Server.Http.Response;
 
-    public class ProductsController : Controller
+    public class ProductsController : ByTheCakeController
     {
         private const string PathProductsSearch = @"products\search";
         private const string PathProductsDetails = @"products\details";
@@ -45,7 +44,7 @@
                 model.ImageUrl.Length < 3 ||
                 model.ImageUrl.Length > 2000)
             {
-                this.ShowError("Product information is not valid");
+                this.ShowErrorDiv("Product information is not valid");
 
                 return this.AddProductResponse();
             }

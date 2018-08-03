@@ -2,14 +2,13 @@
 {
     using System;
     using System.Linq;
-    using WebServer.ByTheCakeApplication.Infrastructure;
     using WebServer.ByTheCakeApplication.Services;
     using WebServer.ByTheCakeApplication.ViewModels;
     using WebServer.Server.Http;
     using WebServer.Server.Http.Contracts;
     using WebServer.Server.Http.Response;
 
-    public class ShoppingController : Controller
+    public class ShoppingController : ByTheCakeController
     {
         private const string CartItems = "cartItems";
         private const string TotalCost = "totalCost";

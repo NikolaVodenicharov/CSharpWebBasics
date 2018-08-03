@@ -18,6 +18,8 @@
         {
             CoreValidator.ThrowIfNull(appRouteConfig, nameof(appRouteConfig));
 
+            this.AnonymousPaths = new List<string>(appRouteConfig.AnonymousPaths);
+
             this.routes = this.InitializeRoutes();
             this.InitializeRouteConfig(appRouteConfig);
         }
@@ -39,6 +41,8 @@
 
             return initializedRoutes;
         }
+
+        public ICollection<string> AnonymousPaths { get; private set; }
 
         private void InitializeRouteConfig(IAppRouteConfig appRouteConfig)
         {

@@ -1,6 +1,5 @@
-﻿namespace WebServer.ByTheCakeApplication.Views
+﻿namespace WebServer.Infrastructure
 {
-    using System;
     using WebServer.Server.Contracts;
 
     public class FileView : IView

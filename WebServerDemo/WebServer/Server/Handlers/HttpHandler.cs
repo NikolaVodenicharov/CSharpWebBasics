@@ -25,7 +25,7 @@
             try
             {
                 // check if user is authenticated
-                var anonymousPaths = new[] { "/login", "/register" };
+                var anonymousPaths = this.serverRouteConfig.AnonymousPaths;
 
                 bool containsPath = anonymousPaths.Contains(context.Request.Path);
 
@@ -41,11 +41,6 @@
                     return new RedirectResponse(anonymousPaths.First());
                 }
 
-                //if (!anonymousPaths.Contains(context.Request.Path) &&
-                //    !context.Request.Session.Contains(SessionStore.CurrentUserKey))
-                //{
-                //    return new RedirectResponse(anonymousPaths.First());
-                //}
 
                 var requestMethod = context.Request.RequestMethod;
                 var requestPath = context.Request.Path;

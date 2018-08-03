@@ -1,8 +1,6 @@
 ﻿namespace WebServer.ByTheCakeApplication.Controllers
 {
     using System;
-    using System.Collections.Generic;
-    using WebServer.ByTheCakeApplication.Infrastructure;
     using WebServer.ByTheCakeApplication.Services;
     using WebServer.ByTheCakeApplication.ViewModels;
     using WebServer.ByTheCakeApplication.ViewModels.Account;
@@ -10,7 +8,7 @@
     using WebServer.Server.Http.Contracts;
     using WebServer.Server.Http.Response;
 
-    public class AccountController : Controller
+    public class AccountController : ByTheCakeController
     {
         private const string PathAccountProfile = @"account\profile";
 
@@ -41,7 +39,7 @@
                 model.Password.Length < 3 ||
                 model.ConfirmPassword != model.Password)
             {
-                this.ShowError(MessageInvalidUserDetails);
+                this.ShowErrorDiv(MessageInvalidUserDetails);
 
                 return this.RegisterResponse();
             }
@@ -56,7 +54,7 @@
             }
             else
             {
-                this.ShowError(MessageUsernameIsBusy);
+                this.ShowErrorDiv(MessageUsernameIsBusy);
 
                 return this.RegisterResponse();
             }
@@ -77,7 +75,7 @@
             if (string.IsNullOrWhiteSpace(model.Username) ||
                 string.IsNullOrWhiteSpace(model.Password))
             {
-                this.ShowError(MessageEmptyField);
+                this.ShowErrorDiv(MessageEmptyField);
 
                 return this.LoginResponse();
             }
@@ -92,7 +90,7 @@
             }
             else
             {
-                this.ShowError(MessageInvalidUserDetails);
+                this.ShowErrorDiv(MessageInvalidUserDetails);
 
                 return this.LoginResponse();
             }
@@ -135,7 +133,7 @@
         private void SetDefaultViewData()
         {
             this.HideErrorDiv();
-            this.ViewData[HttpAuthenticateDisplay] = HtmlNone;
+            this.ViewData[HtmlAuthenticateDisplay] = HtmlNone;
         }
         private void LoginUser(IHttpRequest request, string username)
         {

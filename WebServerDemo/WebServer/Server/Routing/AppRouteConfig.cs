@@ -15,10 +15,14 @@
 
         public AppRouteConfig()
         {
+            this.AnonymousPaths = new List<string>();
+
             this.routes = InitializeRoutes();
         }
 
         public IReadOnlyDictionary<HttpRequestMethod, IDictionary<string, IRequestHandler>> Routes => this.routes;
+
+        public ICollection<string> AnonymousPaths { get; private set; }
 
         private Dictionary<HttpRequestMethod, IDictionary<string, IRequestHandler>> InitializeRoutes()
         {

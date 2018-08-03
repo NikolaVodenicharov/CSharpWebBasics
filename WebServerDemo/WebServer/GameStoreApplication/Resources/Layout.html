@@ -1,0 +1,83 @@
+﻿<!DOCTYPE html>
+
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="utf-8" />
+    <meta name="description" content="Game store" />
+    <meta name="keywords" content="Game, buy" />
+    <meta name="author" content="John Doe" />
+    <title>Game store</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css" integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO" crossorigin="anonymous">
+</head>
+<body>
+
+    <header>
+        <nav class="navbar navbar-expand-md navbar-light bg-success">
+            <div class="container">
+                <a class="navbar-brand" href="/">Game Store</a>
+                <button class="navbar-toggler navbar-toggler-right" type="button" data-toggle="collapse"
+                        data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false"
+                        aria-label="Toggle navigation">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+
+                <div class="collapse navbar-collapse" id="navbarSupportedContent">
+                    <ul class="navbar-nav mr-auto">
+                        <li class="nav-item">
+                            <a class="nav-link" href="#">Cart</a>
+                        </li>
+                    </ul>
+
+                    <ul class="navbar-nav" style="display: {{{anonymousDisplay}}}">
+                        <li class="nav-item">
+                            <a class="nav-link" href="/account/login">Login</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="/account/register">Register</a>
+                        </li>
+                    </ul>
+
+                    <ul class="navbar-nav" style="display: {{{authDisplay}}}">
+                        <li class="nav-item dropdown" style="display: {{{adminDisplay}}}">
+                            <a class="nav-link dropdown-toggle" href="http://example.com" id="AdminDropdownMenuLink"
+                               data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                Admin
+                            </a>
+                            <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
+                                <a class="dropdown-item" href="/admin/games/list">All games</a>
+                                <a class="dropdown-item" href="/admin/games/add">Add game</a>
+                            </div>
+                        </li>
+
+                        <li class="nav-item">
+                            <a class="nav-link" href="/account/logout">Logout</a>
+                        </li>
+                    </ul>
+                </div>
+
+            </div>
+        </nav>
+    </header>
+
+    <div class="col-4 ml-auto mr-auto text-center">
+        <div class="alert alert-danger alert-dismissable" style="display: {{{showError}}}">
+            <a class="close" data-dismiss="alert" aria-label="close">x</a>
+            {{{error}}}
+        </div>
+    </div>
+
+    {{{content}}}
+
+    <footer>
+        <div class="container modal-footer">
+            <p>&copy; 2017 - Game store</p>
+        </div>
+    </footer>
+
+
+    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js" integrity="sha384-ZMP7rVo3mIykV+2+9J3UJ46jBk0WLaUAdn689aCwoqbBJiSnjAK/l8WvCWPIPm49" crossorigin="anonymous"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js" integrity="sha384-ChfqqxuZUCnJSK3+MXmPNIyE6ZbWh2IMqE241rYiqJxyMiZ6OW/JmZQ5stwEULTy" crossorigin="anonymous"></script>
+
+</body>
+</html>
