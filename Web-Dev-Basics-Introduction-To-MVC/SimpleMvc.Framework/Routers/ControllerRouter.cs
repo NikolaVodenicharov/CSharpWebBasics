@@ -8,7 +8,6 @@
     using System.Linq;
     using System.Reflection;
     using WebServer.Contracts;
-    using WebServer.Enums;
     using WebServer.Exceptions;
     using WebServer.Http.Contracts;
     using WebServer.Http.Response;
@@ -26,7 +25,6 @@
         public IHttpResponse Handle(IHttpRequest request)
         {
             this.getParameters = new Dictionary<string, string>(request.UrlParameters);
-
             this.postParameters = new Dictionary<string, string>(request.FormData);
 
             this.requestMethod = request
@@ -41,18 +39,18 @@
             {
                 return new NotFoundResponse();
             }
-            else
+
+            this.PrepareMethodParameters(methodInfo);
+
+            try
             {
-                this.PrepareMethodParameters(methodInfo);
+                var response = this.GetResponse(methodInfo, this.controllerInstance);
+                return response;
             }
-
-            var actionResult = (IInvocable)methodInfo.Invoke(
-                this.GetControllerInstance(),
-                this.methodParameters);
-
-            var content = actionResult.Invoke();
-
-            return new ContentResponse(HttpStatusCode.Ok, content);
+            catch (Exception ex)
+            {
+                return new InternalServerErrorResponse(ex);
+            }
         }
 
         private void PrepareControllerAndActionNames(IHttpRequest request)
@@ -146,46 +144,80 @@
 
             for (var i = 0; i < parameters.Length; i++)
             {
-                var parameter = parameters[i];
+                ParameterInfo parameter = parameters[i];
 
                 if (parameter.ParameterType.IsPrimitive ||
                     parameter.ParameterType == typeof(string))
                 {
-                    var parameterValue = this.getParameters[parameter.Name];
-
-                    var value = Convert
-                        .ChangeType(
-                            parameterValue,
-                            parameter.ParameterType);
-
-                    this.methodParameters[i] = value;
+                    this.ProcessPrimitiveParameter(parameter, i);
                 }
                 else
                 {
-                    var modelType = parameter.ParameterType;
-                    var modelInstance = Activator.CreateInstance(modelType);
-                    var modelProperties = modelType.GetProperties();
-
-                    foreach (var modelProperty in modelProperties)
-                    {
-                        var postParameterValue = this.postParameters[modelProperty.Name];
-                        var value = Convert
-                            .ChangeType(
-                                postParameterValue,
-                                modelProperty.PropertyType);
-
-                        modelProperty
-                            .SetValue(
-                                modelInstance,
-                                value);
-                    }
-
-                    this.methodParameters[i] = Convert
-                        .ChangeType(
-                            modelInstance,
-                            modelType);
+                    this.ProcessModelMarameter(parameter, i);
                 }
             }
+        }
+        private void ProcessPrimitiveParameter(ParameterInfo parameter, int index)
+        {
+            string parameterValue = this.getParameters[parameter.Name];
+
+            object value = Convert
+                .ChangeType(
+                    parameterValue,
+                    parameter.ParameterType);
+
+            this.methodParameters[index] = value;
+        }
+        private void ProcessModelMarameter(ParameterInfo parameter, int index)
+        {
+            Type modelType = parameter.ParameterType;
+            object modelInstance = Activator.CreateInstance(modelType);
+            PropertyInfo[] modelProperties = modelType.GetProperties();
+
+            foreach (var modelProperty in modelProperties)
+            {
+                var postParameterValue = this.postParameters[modelProperty.Name];
+
+                var value = Convert
+                    .ChangeType(
+                        postParameterValue,
+                        modelProperty.PropertyType);
+
+                modelProperty
+                    .SetValue(
+                        modelInstance,
+                        value);
+            }
+
+            this.methodParameters[index] = Convert
+                .ChangeType(
+                    modelInstance,
+                    modelType);
+        }
+
+        private IHttpResponse GetResponse(MethodInfo methodInfo, object controller)
+        {
+            IActionResult actionResult = methodInfo
+                .Invoke(
+                    controller, 
+                    this.methodParameters)
+                as IActionResult;
+
+            if (actionResult == null)
+            {
+                var actionResultAsHttpResponse = actionResult as HttpResponse;
+
+                if (actionResultAsHttpResponse != null)
+                {
+                    return actionResultAsHttpResponse;
+                }
+                else
+                {
+                    throw new InvalidOperationException("Controller action should return either IActionResul or IHttpResponse.");
+                }
+            }
+
+            return actionResult.Invoke();
         }
     }
 }

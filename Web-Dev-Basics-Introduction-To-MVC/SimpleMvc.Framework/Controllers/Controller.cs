@@ -1,16 +1,27 @@
 ﻿namespace SimpleMvc.Framework.Controllers
 {
     using System;
+    using System.Collections.Generic;
+    using System.Linq;
+    using System.Reflection;
     using System.Runtime.CompilerServices;
+    using SimpleMvc.Framework.ActionResults;
+    using SimpleMvc.Framework.Attributes.Validation;
     using SimpleMvc.Framework.Contracts;
-    using SimpleMvc.Framework.Contracts.Generics;
     using SimpleMvc.Framework.Helpers;
+    using SimpleMvc.Framework.Models;
     using SimpleMvc.Framework.ViewEngine;
-    using SimpleMvc.Framework.ViewEngine.Generics;
 
     public abstract class Controller
     {
-        protected IActionResult View([CallerMemberName] string caller ="")
+        public Controller()
+        {
+            this.ViewModel = new ViewModel();
+        }
+
+        protected ViewModel ViewModel { get; set; }
+
+        protected IViewable View([CallerMemberName] string caller ="")
         {
             var controllerName = ControllerHelper
                 .GetControllerName(this);
@@ -18,41 +29,44 @@
             var fullQualifiedName = ControllerHelper
                 .GetViewFullQualifiedName(controllerName, caller);
 
-            return new ActionResult(fullQualifiedName);
+            IRenderable view = new View(fullQualifiedName, this.ViewModel.Data);
+
+            return new ViewResult(view);
         }
 
-        protected IActionResult View(
-            string controller, 
-            string action)
+        protected IRedirectable Redirect(string redirectUrl)
         {
-            var fullQualifiedName = ControllerHelper
-                .GetViewFullQualifiedName(controller, action);
-
-            return new ActionResult(fullQualifiedName);
+            return new RedirectResult(redirectUrl);
         }
 
-        protected IActionResult<TModel> View<TModel>(
-            TModel model, 
-            [CallerMemberName] string caller ="")
+        protected IActionResult NotFound()
         {
-            var controllerName = ControllerHelper
-                .GetControllerName(this);
-
-            var fullQualifiedName = ControllerHelper
-                .GetViewFullQualifiedName(controllerName, caller);
-
-            return new ActionResult<TModel>(fullQualifiedName, model);
+            return new NotFoundResult();
         }
 
-        protected IActionResult<TModel> View<TModel>(
-            TModel model, 
-            string controller, 
-            string action)
+        protected bool IsValidModel(object model)
         {
-            var fullQualifiedName = ControllerHelper
-                .GetViewFullQualifiedName(controller, action);
+            PropertyInfo[] properties = model.GetType().GetProperties();
 
-            return new ActionResult<TModel>(fullQualifiedName, model);
+            foreach (PropertyInfo property in properties)
+            {
+                IEnumerable<PropertyValidationAttribute> attributes = property
+                    .GetCustomAttributes()
+                    .Where(a => a is PropertyValidationAttribute)
+                    .Cast<PropertyValidationAttribute>();   
+
+                foreach (PropertyValidationAttribute attribute in attributes)
+                {
+                    object propertyValue = property.GetValue(model);
+
+                    if (!attribute.IsValid(propertyValue))
+                    {
+                        return false;
+                    }
+                }
+            }
+             
+            return true;
         }
     }
 }

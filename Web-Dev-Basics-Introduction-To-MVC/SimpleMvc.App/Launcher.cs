@@ -10,7 +10,11 @@
     {
         public static void Main()
         {
-            MvcEngine.Run(new WebServer(1337, new ControllerRouter()));           
+            var server = new WebServer(
+                1337, 
+                new ControllerRouter());
+
+            MvcEngine.Run(server);           
         }
     }
 }
