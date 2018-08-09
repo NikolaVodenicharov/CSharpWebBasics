@@ -2,6 +2,7 @@
 {
     using SimpleMvc.Framework.Attributes.Methods;
     using SimpleMvc.Framework.Contracts;
+    using SimpleMvc.Framework.Controllers;
     using SimpleMvc.Framework.Helpers;
     using System;
     using System.Collections.Generic;
@@ -17,7 +18,7 @@
         private IDictionary<string, string> getParameters;
         private IDictionary<string, string> postParameters;
         private string requestMethod;
-        private object controllerInstance;
+        private Controller controllerInstance;
         private string controllerName;
         private string actionName;
         private object[] methodParameters;
@@ -44,6 +45,12 @@
 
             try
             {
+                if (this.controllerInstance != null)
+                {
+                    this.controllerInstance.Request = request;
+                    this.controllerInstance.InitializeController();
+                }
+
                 var response = this.GetResponse(methodInfo, this.controllerInstance);
                 return response;
             }
@@ -97,43 +104,35 @@
         }
         private IEnumerable<MethodInfo> GetSuitableMethods()
         {
-            var controller = this.GetControllerInstance();
+            this.SetControllerInstance();
 
-            if (controller == null)
+            if (this.controllerInstance == null)
             {
                 return new MethodInfo[0];
             }
 
-            return controller
+            return this.controllerInstance
                .GetType()
                .GetMethods()
                .Where(m => m.Name == actionName)
                .ToList();
         }
-        private object GetControllerInstance()
+        private void SetControllerInstance()
         {
-            if (controllerInstance != null)
+            if (this.controllerInstance == null)
             {
-                return this.controllerInstance;
+                string controllerFullQualifiedName = string.Format(
+                    "{0}.{1}.{2}, {0}",
+                    MvcContext.Get.AssemblyName,
+                    MvcContext.Get.ControllersFolder,
+                    this.controllerName);
+
+                Type controllerType = Type.GetType(controllerFullQualifiedName);
+
+                this.controllerInstance = Activator
+                    .CreateInstance(controllerType)
+                    as Controller;
             }
-
-            var controllerFullQualifiedName = string.Format(
-                "{0}.{1}.{2}, {0}",
-                MvcContext.Get.AssemblyName,
-                MvcContext.Get.ControllersFolder,
-                this.controllerName);
-
-            var controllerType = Type.GetType(controllerFullQualifiedName);
-
-            if (controllerType == null)
-            {
-                return null;
-            }
-
-            this.controllerInstance = Activator
-                .CreateInstance(controllerType);
-
-            return this.controllerInstance;
         }
 
         private void PrepareMethodParameters(MethodInfo methodInfo)

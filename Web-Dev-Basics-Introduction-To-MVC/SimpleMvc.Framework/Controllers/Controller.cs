@@ -10,16 +10,22 @@
     using SimpleMvc.Framework.Contracts;
     using SimpleMvc.Framework.Helpers;
     using SimpleMvc.Framework.Models;
+    using SimpleMvc.Framework.Security;
     using SimpleMvc.Framework.ViewEngine;
+    using WebServer.Http;
+    using WebServer.Http.Contracts;
 
     public abstract class Controller
     {
         public Controller()
         {
             this.ViewModel = new ViewModel();
+            this.User = new Authentication();
         }
 
         protected ViewModel ViewModel { get; set; }
+        protected internal IHttpRequest Request { get; internal set; }
+        protected internal Authentication User { get; private set; }
 
         protected IViewable View([CallerMemberName] string caller ="")
         {
@@ -38,7 +44,6 @@
         {
             return new RedirectResult(redirectUrl);
         }
-
         protected IActionResult NotFound()
         {
             return new NotFoundResult();
@@ -67,6 +72,27 @@
             }
              
             return true;
+        }
+
+        protected internal void InitializeController()
+        {
+            string name = this
+                .Request
+                .Session
+                .Get<string>(SessionStore.CurrentUserKey);
+
+            if (name != null)
+            {
+                this.User = new Authentication(name);
+            }
+        }
+        protected void SignIn (string name)
+        {
+            this.Request.Session.Add(SessionStore.CurrentUserKey, name);
+        }
+        protected void SignOut ()
+        {
+            this.Request.Session.Clear();
         }
     }
 }
