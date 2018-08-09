@@ -20,5 +20,6 @@
 
         public string ModelsFolder { get; set; } = "Models";
 
+        public string ResourcesFolder { get; set; } = "Resources";
     }
 }

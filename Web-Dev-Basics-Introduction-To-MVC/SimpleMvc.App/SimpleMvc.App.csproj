@@ -9,4 +9,9 @@
     <ProjectReference Include="..\SimpleMvc.Framework\SimpleMvc.Framework.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Resources\ico\" />
+    <Folder Include="Resources\jpg\" />
+  </ItemGroup>
+
 </Project>

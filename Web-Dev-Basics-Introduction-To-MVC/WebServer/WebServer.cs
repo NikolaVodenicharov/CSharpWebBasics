@@ -11,19 +11,18 @@
         private const string localHostIpAddress = "127.0.0.1";
 
         private readonly int port;
-
-        private readonly IHandleable mvcRequestHandler;
-
+        private readonly IHandleable requestHandler;
+        private readonly IHandleable resourceHandler;
         private readonly TcpListener listener;
-
         private bool isRunning;
 
-        public WebServer(int port, IHandleable mvcRequestHandler)
+        public WebServer(int port, IHandleable requestHandler, IHandleable resourceHandler)
         {
             this.port = port;
             this.listener = new TcpListener(IPAddress.Parse(localHostIpAddress), port);
 
-            this.mvcRequestHandler = mvcRequestHandler;
+            this.requestHandler = requestHandler;
+            this.resourceHandler = resourceHandler;
         }
 
         public void Run()
@@ -41,7 +40,7 @@
             while (this.isRunning)
             {
                 var client = await this.listener.AcceptSocketAsync();
-                var connectionHandler = new ConnectionHandler(client, this.mvcRequestHandler);
+                var connectionHandler = new ConnectionHandler(client, this.requestHandler, this.resourceHandler);
                 await connectionHandler.ProcessRequestAsync();
             }
         }

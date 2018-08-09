@@ -12,7 +12,8 @@
         {
             var server = new WebServer(
                 1337, 
-                new ControllerRouter());
+                new ControllerRouter(),
+                new ResourceRouter());
 
             MvcEngine.Run(server);           
         }
